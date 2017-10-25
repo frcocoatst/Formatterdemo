@@ -38,15 +38,15 @@ extension String {
     }
 }
 /*
-usage:
-
-let str = "Hello, playground, playground, playground"
-str.index(of: "play")      // 7
-str.location(of: "play")
-str.endIndex(of: "play")   // 11
-str.indexes(of: "play")    // [7, 19, 31]
-str.ranges(of: "play")     // [{lowerBound 7, upperBound 11}, {lowerBound 19, upperBound 23}, {lowerBound 31, upperBound 35}]
-*/
+ usage:
+ 
+ let str = "Hello, playground, playground, playground"
+ str.index(of: "play")      // 7
+ str.location(of: "play")
+ str.endIndex(of: "play")   // 11
+ str.indexes(of: "play")    // [7, 19, 31]
+ str.ranges(of: "play")     // [{lowerBound 7, upperBound 11}, {lowerBound 19, upperBound 23}, {lowerBound 31, upperBound 35}]
+ */
 
 class OnlyNumber: Formatter {
     
@@ -72,6 +72,7 @@ class OnlyNumber: Formatter {
     
 }
 
+// IP-Formatter
 class IPFormatter: Formatter {
     
     override func string(for obj: (Any)?) -> String? {
@@ -85,25 +86,28 @@ class IPFormatter: Formatter {
         return true
     }
     
-    override func isPartialStringValid(_ partialString: String, newEditingString newString: AutoreleasingUnsafeMutablePointer<NSString?>?, errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
+    override func isPartialStringValid(_ partialString: String,
+                                       newEditingString newString: AutoreleasingUnsafeMutablePointer<NSString?>?,
+                                       errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
         
-        // Ziffern und Punkt
-        let allowedChars = CharacterSet(charactersIn:"0123456789...").inverted
+        // numbers and . allowed
+        let notAllowedChars = CharacterSet(charactersIn:"0123456789.").inverted
         
-        if(partialString.rangeOfCharacter(from: allowedChars) != nil){
+        if(partialString.rangeOfCharacter(from: notAllowedChars) != nil){
             NSSound.beep()
             return false
         }
-        else{
+        else
+        {
             // https://stackoverflow.com/questions/24034043/how-do-i-check-if-a-string-contains-another-string-in-swift
-            // Keine Punktfolge
+            // no double dots allowd
             if (partialString.range(of:"..") != nil)
             {
                 NSSound.beep()
                 return false
             }
-
-            // Kein Punkt am Anfang
+            
+            // No dot at the beginning
             if let range = partialString.range(of:".") {
                 let startPos = partialString.distance(from: partialString.startIndex, to: range.lowerBound)
                 if startPos == 0{
@@ -111,29 +115,23 @@ class IPFormatter: Formatter {
                     return false
                 }
             }
-            // Adress-Segmente bilden
-            // NSArray *textSegments = [partialString componentsSeparatedByString:@"."];
+            // Array of segments
             let textSegments = partialString.components(separatedBy: ".")
             
-            // Maximal vier Segmente erlauben
+            // allow only four segements
             if textSegments.count > 4 {
                 NSSound.beep()
                 return false
             }
-            // Einzelne Segmente prüfen
+            
+            // check the individual segments
             for segment in textSegments{
                 
-                // Keine 0 am Anfang, sonst aber schon
+                // no 0 in the first segment at the beginning
                 if textSegments.count == 1
                 {
-                    /* if([segment rangeOfString:@"0"].location == 0)
-                    if (segment.range(of:"0") != nil){
-                        NSSound.beep()
-                        return false
-                    }
-                    */
-                    if let range = partialString.range(of:"0") {
-                        let startPos = partialString.distance(from: partialString.startIndex, to: range.lowerBound)
+                    if let range = segment.range(of:"0") {
+                        let startPos = segment.distance(from: segment.startIndex, to: range.lowerBound)
                         if startPos == 0 {
                             NSSound.beep()
                             return false
@@ -142,10 +140,9 @@ class IPFormatter: Formatter {
                 }
                 else
                 {
-                    // Keine 00 in den weiteren Segmenteb
-                    //if([segment rangeOfString:@"00"].location == 0)
-                    if let range = partialString.range(of:"00") {
-                        let startPos = partialString.distance(from: partialString.startIndex, to: range.lowerBound)
+                    // No 00 in the segments at the segment start
+                    if let range = segment.range(of:"00") {
+                        let startPos = segment.distance(from: segment.startIndex, to: range.lowerBound)
                         if startPos == 0 {
                             NSSound.beep()
                             return false
@@ -153,85 +150,35 @@ class IPFormatter: Formatter {
                     }
                     else
                     {
-                        if let range = partialString.range(of:"0") {
-                            let startPos = partialString.distance(from: partialString.startIndex, to: range.lowerBound)
+                        // No 0 at segment start when other digits follow
+                        if let range = segment.range(of:"0") {
+                            let startPos = segment.distance(from: segment.startIndex, to: range.lowerBound)
                             if startPos == 0 && segment.lengthOfBytes(using: .utf8) > 1 {
                                 NSSound.beep()
                                 return false
                             }
                         }
                     }
+                }
                 
-                    // Maximal 3 Ziffern
-                    if segment.lengthOfBytes(using: .utf8) > 3
-                    {
+                // max three digits
+                if segment.lengthOfBytes(using: .utf8) > 3
+                {
+                    NSSound.beep()
+                    return false
+                    
+                }
+                
+                // IP segment should be less then 255
+                let wert = Int(segment)
+                if wert != nil {
+                    if wert! > 255 {
                         NSSound.beep()
                         return false
-                        
                     }
-                
-                    // Kleiner gleich 255
-                    let wert = Int(segment)
-                    if wert != nil {
-                        if wert! < 255 {
-                            NSSound.beep()
-                            return false
-                        }
-                    }
-    
                 }
             }
         }
         return true
     }
 }
-/* another try:
- class IPFormatter: Formatter {
- 
- override func string(for obj: Any?) -> String? {
- 
- if obj == nil {
- print("stringForObjectValue: obj is nil, returning nil")
- return nil
- }
- if let o = obj as? String {
- print("stringForObjectValue:  obj is string, returning \(o)")
- return o
- }
- 
- print("stringForObjectValue: obj is not string, returning nil")
- return nil
- }
- 
- func getObjectValue(_: AutoreleasingUnsafeMutablePointer<AnyObject?>?, for: String, errorDescription: AutoreleasingUnsafeMutablePointer<NSString?>?) {
- 
- //override func getObjectValue(obj: AutoreleasingUnsafeMutablePointer<AnyObject?>, forString string: String, errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>) -> Bool {
- print("getObjectValue: \(string)")
- let obj = string
- // obj.memory = string
- return true
- }
- 
- //    override func isPartialStringValid(partialString: String?, newEditingString newString: AutoreleasingUnsafeMutablePointer<NSString?>, errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>) -> Bool {
- 
- override func isPartialStringValid(_ partialString: String, newEditingString newString: AutoreleasingUnsafeMutablePointer<NSString?>?, errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
- 
- if let s = partialString {
- var illegals : String = join("",s.componentsSeparatedByCharactersInSet(PSEntryNameFormatterCharacterSet))
- var goods = s.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: illegals))
- let newString : NSString = join("", goods)
- 
- if String(newString) == s {
- print("isPartialStringValid: partial string ok")
- return true
- }
- }
- 
- print("isPartialStringValid: partial string bad")
- return false
- }
- 
- 
- }
- 
- */
