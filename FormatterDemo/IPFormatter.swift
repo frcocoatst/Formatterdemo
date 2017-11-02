@@ -76,13 +76,26 @@ class OnlyNumber: Formatter {
 class IPFormatter: Formatter {
     
     override func string(for obj: (Any)?) -> String? {
+        
+        if obj == nil {
+            print("stringForObjectValue: obj is nil, returning nil")
+            return nil
+        }
+        if let o = obj as? String {
+            print("stringForObjectValue:  obj is string, returning \(o)")
+            return o
+        }
+        print("stringForObjectValue: obj is not string, returning nil")
         return nil
+
     }
     
     override func getObjectValue(_ obj: AutoreleasingUnsafeMutablePointer<AnyObject?>?,
                                  for string: String,
                                  errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
-        
+        //obj.memory = string
+        print("getObjectValue: \(string)")
+        //obj?.memory = string
         return true
     }
     

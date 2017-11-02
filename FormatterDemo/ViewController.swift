@@ -56,7 +56,10 @@ class IntegerFormatter: NumberFormatter {
  //     enterIP.formatter = onlyIntFormatter
 */
 
+// var enteredString = String()
+
 class ViewController: NSViewController {
+    
 
     @IBOutlet weak var outputIP: NSTextField!
 
@@ -65,17 +68,15 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        enterIP.stringValue = "Enter Number"
-        outputIP.stringValue = "Output Number"
+        self.enterIP.stringValue = "255.255.255.255"
+        self.outputIP.stringValue = "Entered IP"
         
         // set the formatter
         // let onlyIntFormatter = IntegerFormatter()
-        //let onlyIntFormatter = OnlyNumber()
+        // let onlyIntFormatter = OnlyNumber()
         let ipFormatter = IPFormatter()
-        enterIP.formatter = ipFormatter
+        self.enterIP.formatter = ipFormatter
         
-    
-        // Do any additional setup after loading the view.
     }
 
     override var representedObject: Any? {
@@ -86,8 +87,13 @@ class ViewController: NSViewController {
 
     @IBAction func setIPAction(_ sender: Any) {
         
-        outputIP.stringValue =  enterIP.stringValue
+        // enteredString = self.enterIP.stringValue
+        // self.outputIP.stringValue = self.enterIP.stringValue
         
+        let enteredString = self.enterIP.stringValue
+        self.outputIP.stringValue = enteredString
+        
+        print(" entered string: \(self.enterIP.stringValue)")
     }
     
 }
