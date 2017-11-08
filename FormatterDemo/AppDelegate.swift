@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  FormatterDemo
 //
-//  Created by Friedrich HAEUPL on 24.10.17.
-//  Copyright © 2017 Friedrich HAEUPL. All rights reserved.
+//  Created by me on 24.10.17.
+//  Copyright © 2017 me. All rights reserved.
 //
 
 import Cocoa

@@ -2,8 +2,8 @@
 //  ViewController.swift
 //  FormatterDemo
 //
-//  Created by Friedrich HAEUPL on 24.10.17.
-//  Copyright © 2017 Friedrich HAEUPL. All rights reserved.
+//  Created by me on 24.10.17.
+//  Copyright © 2017 me. All rights reserved.
 //
 //  https://stackoverflow.com/questions/12161654/restrict-nstextfield-to-only-allow-numbers
 //
@@ -73,7 +73,10 @@ class ViewController: NSViewController {
         
         // set the formatter
         // let onlyIntFormatter = IntegerFormatter()
+        
         // let onlyIntFormatter = OnlyNumber()
+        // self.enterIP.formatter = onlyIntFormatter
+        
         let ipFormatter = IPFormatter()
         self.enterIP.formatter = ipFormatter
         
