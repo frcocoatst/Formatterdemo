@@ -146,16 +146,14 @@ class IPFormatter: Formatter {
         }
         return nil
     }
-    
+ 
     override func getObjectValue(_ obj: AutoreleasingUnsafeMutablePointer<AnyObject?>?,
                                  for string: String,
                                  errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
-        //
-        print("getObjectValue: string = \(string)")
-        //
-        if obj != nil {
-            // obj!.memory = string
-        }
+      
+        // print("getObjectValue: string = \(string)")
+        obj?.pointee = string as AnyObject?
+        
         return true
     }
     
@@ -253,7 +251,7 @@ class IPFormatter: Formatter {
             }
         }
         // newString.memory = partialString
-        // newString = partialString
+        // newString = (partialString as NSString).copy()
         return true
     }
 }
