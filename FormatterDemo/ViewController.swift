@@ -71,12 +71,13 @@ class ViewController: NSViewController {
         self.enterIP.stringValue = "255.255.255.255"
         self.outputIP.stringValue = "Entered IP"
         
-        // set the formatter
-        // let onlyIntFormatter = IntegerFormatter()
-        
+        // some formatters
         // let onlyIntFormatter = OnlyNumber()
         // self.enterIP.formatter = onlyIntFormatter
         
+        // let macAddressFormatter = MacAddressFormatter()
+        // self.enterIP.formatter = macAddressFormatter
+
         let ipFormatter = IPFormatter()
         self.enterIP.formatter = ipFormatter
         

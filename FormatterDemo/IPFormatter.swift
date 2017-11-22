@@ -73,10 +73,9 @@ class OnlyNumber: Formatter {
 }
 
 // https://stackoverflow.com/questions/37605070/nstextfield-mask-swift-2-2
-/*
 class MacAddressFormatter : Formatter {
     // override func stringForObjectValue(obj: AnyObject?) -> String? {
-        override func string(for obj: (Any)?) -> String? {
+    override func string(for obj: (Any)?) -> String? {
         if let string = obj as? String {
             return string
         }
@@ -86,10 +85,7 @@ class MacAddressFormatter : Formatter {
     override func getObjectValue(_ obj: AutoreleasingUnsafeMutablePointer<AnyObject?>?,
                                  for string: String,
                                  errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
-        if obj != nil {
-            
-            obj!.memory = string
-        }
+        obj?.pointee = string as AnyObject?
         return true
     }
     
@@ -98,48 +94,39 @@ class MacAddressFormatter : Formatter {
                                        errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
         
         if partialString.isEmpty { return true }  //allow empty field
-        if partialString.characters.count > 17 {
+        if partialString.count > 17 {
             return false
         }  //don't allow too many chars
         
-    
+        
         let disallowedChars = CharacterSet(charactersIn: "0123456789ABCDEFabcdef:").inverted
         
         //if let _ = partialString.rangeOfCharacter(from: disallowedChars, options: .CaseInsensitiveSearch)
-         if let _ = partialString.rangeOfCharacter(from: disallowedChars, options: .caseInsensitive){
-            error!.memory = "Invalid entry.  MAC Address can only contain 0-9 & A-F"
+        if let _ = partialString.rangeOfCharacter(from: disallowedChars, options: .caseInsensitive){
+            error!.pointee = "Invalid entry.  MAC Address can only contain 0-9 & A-F"
             return false }
         
         var string = ""
-        for char in partialString.characters {
+        for char in partialString {
             if char != ":" {
                 string = string + String(char)
-                if string.characters.count % 3 == 0 {
-                    string.insert(":", at: string.endIndex.advancedBy(-1))
+                if string.count % 3 == 0 {
+                    // myString.index(before:) // returns an index reduced by one
+                    // string.insert(":", at: string.endIndex.advancedBy(-1))
+                    string.insert(":", at: string.index(before: string.endIndex))
                 }
             }
         }
-        newString!.memory = string.uppercaseString
+        newString!.pointee = string.uppercased() as NSString
         return false
     }
 }
-*/
+
 // IP-Formatter
 class IPFormatter: Formatter {
     
     override func string(for obj: (Any)?) -> String? {
-/*
-        if obj == nil {
-            print("stringForObjectValue: obj is nil, returning nil")
-            return nil
-        }
-        if let o = obj as? String {
-            print("stringForObjectValue:  obj is string, returning \(o)")
-            return o
-        }
-        print("stringForObjectValue: obj is not string, returning nil")
-        return nil
-*/
+        
         if let stringObject = obj as? String
         {
             return stringObject
